@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Alimentación — Recuperación Medular (14 días)</title>
+<style>
+  :root{
+    --bg:#f6f8f7; --card:#ffffff; --ink:#1f2a2e; --muted:#5b6b70;
+    --green:#2f7d6b; --green-soft:#e3f1ec; --amber:#b87333; --amber-soft:#fbeede;
+    --red:#b3261e; --red-soft:#fbe6e4; --line:#e2e8e6; --accent:#2f7d6b;
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:0 18px 80px}
+  header.hero{
+    background:linear-gradient(135deg,#2f7d6b,#3a9b85); color:#fff;
+    padding:42px 18px 34px; text-align:center; margin-bottom:24px;
+  }
+  header.hero h1{margin:0 0 6px; font-size:1.7rem; line-height:1.25}
+  header.hero p{margin:2px 0; opacity:.95; font-size:.95rem}
+  .hero .meta{margin-top:12px; font-size:.85rem; opacity:.9}
+
+  nav.tabs{
+    position:sticky; top:0; z-index:20; background:rgba(246,248,247,.92);
+    backdrop-filter:blur(8px); display:flex; flex-wrap:wrap; gap:8px;
+    padding:12px 0; margin-bottom:8px; border-bottom:1px solid var(--line);
+  }
+  nav.tabs button{
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    padding:8px 14px; border-radius:999px; cursor:pointer; font-size:.88rem;
+    transition:.15s; font-weight:500;
+  }
+  nav.tabs button:hover{border-color:var(--green)}
+  nav.tabs button.active{background:var(--green); color:#fff; border-color:var(--green)}
+
+  section.panel{display:none; animation:fade .25s ease}
+  section.panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; margin:16px 0; box-shadow:var(--shadow);
+  }
+  h2{font-size:1.25rem; margin:.2em 0 .6em}
+  h3{font-size:1.05rem; margin:1.1em 0 .4em}
+  p{margin:.5em 0}
+  .lead{color:var(--muted)}
+
+  .rule{display:flex; gap:12px; padding:14px 16px; border-radius:12px; margin:10px 0; align-items:flex-start}
+  .rule .n{font-size:1.3rem; line-height:1}
+  .rule.red{background:var(--red-soft); border:1px solid #f3c9c5}
+  .rule.amber{background:var(--amber-soft); border:1px solid #f0d9bf}
+  .rule.green{background:var(--green-soft); border:1px solid #cfe7df}
+  .rule strong{display:block; margin-bottom:2px}
+
+  .ev{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px;
+      border-radius:999px; vertical-align:middle; margin-left:4px}
+  .ev.sol{background:var(--green-soft); color:#1f5d4f}
+  .ev.mod{background:var(--amber-soft); color:#8a4f1f}
+  .ev.baja{background:#eef0f1; color:#5b6b70}
+
+  /* day cards */
+  .day{border:1px solid var(--line); border-radius:14px; margin:14px 0; overflow:hidden; background:var(--card); box-shadow:var(--shadow)}
+  .day > summary{
+    list-style:none; cursor:pointer; padding:14px 18px; display:flex; align-items:center;
+    justify-content:space-between; gap:10px; font-weight:600;
+  }
+  .day > summary::-webkit-details-marker{display:none}
+  .day[open] > summary{border-bottom:1px solid var(--line); background:#fbfdfc}
+  .day .badges{display:flex; gap:6px; flex-wrap:wrap}
+  .badge{font-size:.72rem; font-weight:700; padding:2px 9px; border-radius:999px; white-space:nowrap}
+  .badge.cook{background:var(--green-soft); color:#1f5d4f}
+  .badge.use{background:#eef4f8; color:#3a6b88}
+  .badge.res{background:var(--red-soft); color:#9a2019}
+  .badge.free{background:#f0f0f0; color:#666}
+  .meals{padding:6px 18px 16px}
+  .meal{display:flex; gap:10px; padding:9px 0; border-bottom:1px dashed var(--line)}
+  .meal:last-child{border-bottom:none}
+  .meal .label{flex:0 0 96px; font-weight:600; color:var(--green); font-size:.85rem}
+  .meal .txt{flex:1}
+  .chev{transition:.2s; color:var(--muted)}
+  .day[open] .chev{transform:rotate(90deg)}
+
+  /* shopping list */
+  ul.shop{list-style:none; padding:0; margin:.4em 0}
+  ul.shop li{padding:7px 0 7px 30px; position:relative; border-bottom:1px solid var(--line)}
+  ul.shop li:last-child{border-bottom:none}
+  ul.shop li input{position:absolute; left:2px; top:11px; width:17px; height:17px; accent-color:var(--green)}
+  ul.shop li label{cursor:pointer}
+  ul.shop li input:checked + label{text-decoration:line-through; color:var(--muted)}
+  .shop-group{margin:14px 0}
+  .shop-group h3{margin-bottom:.2em}
+  .nope{background:var(--red-soft); border:1px solid #f3c9c5; border-radius:12px; padding:12px 16px}
+  .nope h3{color:var(--red); margin-top:.2em}
+
+  table{width:100%; border-collapse:collapse; margin:.6em 0; font-size:.92rem}
+  th,td{text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{background:#fbfdfc; font-size:.82rem; text-transform:uppercase; letter-spacing:.03em; color:var(--muted)}
+
+  ol.q{padding-left:20px} ol.q li{margin:8px 0}
+
+  .pill{display:inline-block; background:var(--green-soft); color:#1f5d4f; border-radius:999px; padding:3px 10px; font-size:.8rem; font-weight:600; margin:2px 4px 2px 0}
+
+  .note{background:#fbfdfc; border-left:3px solid var(--green); padding:10px 14px; border-radius:0 8px 8px 0; margin:12px 0; color:var(--muted)}
+
+  footer.disc{margin-top:30px; font-size:.82rem; color:var(--muted); text-align:center; padding:0 10px}
+
+  .toolbar{display:flex; gap:8px; justify-content:flex-end; margin:6px 0}
+  .toolbar button{border:1px solid var(--line); background:var(--card); border-radius:8px; padding:6px 12px; cursor:pointer; font-size:.82rem}
+  .toolbar button:hover{border-color:var(--green)}
+
+  @media (max-width:560px){
+    header.hero h1{font-size:1.35rem}
+    .meal .label{flex-basis:78px; font-size:.8rem}
+    .card{padding:16px}
+  }
+  @media print{
+    nav.tabs,.toolbar{display:none!important}
+    section.panel{display:block!important}
+    .day{break-inside:avoid}
+    body{background:#fff}
+    header.hero{background:#2f7d6b!important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .day[open] .meals,.meals{display:block!important}
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>Plan de Alimentación — Recuperación Medular</h1>
+  <p>14 días repetibles · mexicano casero · dieta cocida y segura</p>
+  <p class="meta">Para Jesús E. Lizárraga · material para discutir con la Dra. Lluvia Sosa · 23 jun 2026</p>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs">
+    <button class="active" data-t="reglas">Reglas clave</button>
+    <button data-t="plan">Menú 14 días</button>
+    <button data-t="compras">Lista de compras</button>
+    <button data-t="suplementos">Suplementos</button>
+    <button data-t="preguntas">Preguntas Dra.</button>
+  </nav>
+
+  <!-- ============ REGLAS ============ -->
+  <section class="panel active" id="reglas">
+    <div class="card">
+      <h2>⚠️ Léelo primero</h2>
+      <p class="lead">Este plan <strong>no reemplaza a tu médica</strong>. Está hecho para llevarlo a tu próxima cita y decidir juntos qué aplica. Cada bloque indica su nivel de evidencia.</p>
+
+      <div class="rule red"><div class="n">🚫</div><div><strong>Ciclosporina = bandera roja</strong>Nada de toronja/pomelo (jugo, gajos, mermelada) ni hierba de San Juan, nunca. No empieces ningún suplemento nuevo sin avisar a tu médica. <span class="ev sol">Evidencia sólida</span></div></div>
+
+      <div class="rule amber"><div class="n">🍲</div><div><strong>Dieta cocida y segura</strong>Todo bien cocido, nada crudo o tibio, lácteos solo pasteurizados, huevo siempre cocido completo, agua embotellada/hervida, recalentar sobras hasta que echen vapor (≈74&nbsp;°C). <span class="ev sol">Sólida (CDC)</span></div></div>
+
+      <div class="rule green"><div class="n">⚖️</div><div><strong>Hierro: ni lo restrinjas ni lo suplementes</strong>Tu sobrecarga (ferritina 1,521) es transfusional; la dieta no la corrige. Entonces: cero pastillas de hierro, moderar vísceras y res roja, evitar vitamina C alta junto a comidas, sin alcohol, pescado solo bien cocido. <span class="ev sol">Sólida</span></div></div>
+    </div>
+
+    <div class="card">
+      <h2>El objetivo en una frase</h2>
+      <p>Darle a tu médula los “ladrillos” para fabricar sangre (<strong>proteína suficiente</strong>, folato, B12, B6, cobre, zinc) <strong>sin</strong> sumar hierro innecesario ni riesgo de infección, cuidando además <strong>riñón y sodio</strong> por la ciclosporina y los esteroides.</p>
+      <h3>Meta de proteína <span class="ev mod">Moderada</span></h3>
+      <p>Para tus 72 kg apunto a <strong>~90-100 g/día</strong> (≈1.3-1.4 g/kg), repartidos en las 5 ingestas. <strong>A confirmar con la Dra. Sosa</strong>: si tu función renal lo pide, bajamos a ~1.0 g/kg (~72 g).</p>
+      <div class="note">Si la prednisona te abre el apetito, las colaciones de proteína + fibra (yogur pasteurizado, hummus con verdura cocida, fruta de cáscara gruesa) sacian sin que subas de peso descontrolado.</div>
+    </div>
+
+    <div class="card">
+      <h2>Cómo está armado</h2>
+      <p><span class="pill">14 días repetibles</span> <span class="pill">5 ingestas/día</span> <span class="pill">mexicano simple</span> <span class="pill">cocción fresca</span></p>
+      <p><strong>Excepción práctica: las legumbres.</strong> El frijol, la lenteja y el garbanzo se cocinan <strong>una sola vez en olla grande</strong> y se usan en bloques de 2-3 días consecutivos (refrigerar de inmediato; recalentar a vapor). Así cocinas una vez y comes seguro varios días.</p>
+      <div class="note"><strong>Bloques de legumbre:</strong> Frijol → días 1-3 · Lenteja → días 4-5 · Frijol → días 7-9 · Garbanzo → días 10-11 · Lenteja → días 12-13.</div>
+      <p style="font-size:.88rem;color:var(--muted)"><strong>Porción de proteína:</strong> “una palma” ≈ 25-30 g (pollo/pescado ≈ 120-150 g crudos; o 2 huevos; o 1 taza de legumbre cocida). Café: 2 al día, lejos de las comidas con más hierro.</p>
+    </div>
+  </section>
+
+  <!-- ============ PLAN ============ -->
+  <section class="panel" id="plan">
+    <div class="toolbar">
+      <button onclick="toggleAll(true)">Abrir todos</button>
+      <button onclick="toggleAll(false)">Cerrar todos</button>
+      <button onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+    <div id="days"></div>
+    <div class="card">
+      <p style="margin:0"><strong>Patrón de la quincena:</strong> pollo/pavo como base, pescado 2×/semana, legumbres en bloques de 2-3 días, res roja solo 2 veces en 14 días (por el hierro), huevo siempre bien cocido. Si un día no te llena, repite una colación de proteína antes de subir el tamaño de la cena.</p>
+    </div>
+  </section>
+
+  <!-- ============ COMPRAS ============ -->
+  <section class="panel" id="compras">
+    <div class="card">
+      <h2>Lista de compras <span style="font-size:.8rem;color:var(--muted);font-weight:400">(~2 semanas · marca lo que ya tengas)</span></h2>
+      <div id="shop"></div>
+    </div>
+    <div class="card nope">
+      <h3>❌ NO comprar</h3>
+      <p style="margin:.3em 0">Toronja/pomelo y sus jugos · sustitutos de sal con potasio · suplementos de hierro · vitamina C en dosis altas · multivitamínicos con hierro o hierbas · embutidos para comer sin recalentar · quesos frescos no pasteurizados · germinados crudos · alcohol.</p>
+    </div>
+  </section>
+
+  <!-- ============ SUPLEMENTOS ============ -->
+  <section class="panel" id="suplementos">
+    <div class="card">
+      <h2>Suplementos a evaluar</h2>
+      <p class="lead">Todos <strong>a confirmar con la Dra. Sosa</strong>. Esto es para proponer y discutir, no para iniciar por tu cuenta.</p>
+      <table>
+        <thead><tr><th>Suplemento</th><th>Dosis ref.</th><th>Beneficio</th><th>Seguridad (ciclosporina/riñón)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Vitamina D</strong></td><td>1,000-2,000 UI/día</td><td><span class="ev mod">Moderada</span></td><td>Generalmente segura; medir nivel antes; útil con calcio mientras tomes prednisona</td></tr>
+          <tr><td><strong>Magnesio</strong></td><td>200-400 mg/día si hay déficit</td><td><span class="ev mod">Moderada</span></td><td>Razonable; vigilar nivel (el tuyo salió 1.96, normal); ojo con riñón</td></tr>
+          <tr><td><strong>Omega-3</strong></td><td>1-2 g/día</td><td><span class="ev baja">Baja-mod.</span></td><td>Suele ser seguro; puede afectar plaquetas/coagulación — confirmar por tu conteo</td></tr>
+          <tr><td><strong>Creatina</strong></td><td>3-5 g/día</td><td><span class="ev mod">Moderada</span></td><td>Precaución renal: eleva creatinina sérica y confunde lecturas. No iniciar hasta luz verde; con ejercicio suspendido aporta poco</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Orden sugerido:</strong> primero medir vitamina D y magnesio; vitamina D es la más fácil de justificar; creatina la dejaría para el final (riñón + ejercicio aún suspendido).</div>
+    </div>
+    <div class="card">
+      <h2>Notas de evidencia</h2>
+      <table>
+        <thead><tr><th>Recomendación</th><th>Nivel</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td>Dieta cocida/segura ahora</td><td><span class="ev sol">Sólida</span></td><td>Riesgo de Listeria/infección con inmunosupresión profunda</td></tr>
+          <tr><td>Evitar toronja/pomelo y San Juan</td><td><span class="ev sol">Sólida</span></td><td>Alteran niveles de ciclosporina</td></tr>
+          <tr><td>No suplementar hierro; moderar res</td><td><span class="ev sol">Sólida</span></td><td>Sobrecarga transfusional; la dieta no la corrige</td></tr>
+          <tr><td>Evitar vitamina C alta con comidas</td><td><span class="ev mod">Moderada</span></td><td>Aumenta absorción de hierro</td></tr>
+          <tr><td>Proteína ~1.3 g/kg</td><td><span class="ev mod">Moderada</span></td><td>Apoya recuperación; techo = función renal</td></tr>
+          <tr><td>Cuidar sodio, sin sustitutos con potasio</td><td><span class="ev mod">Moderada</span></td><td>Ciclosporina + esteroides; riesgo renal/hiperkalemia</td></tr>
+          <tr><td>Legumbres permitidas</td><td><span class="ev sol">Sólida</span></td><td>Proteína, folato, fibra; sin conflicto</td></tr>
+          <tr><td>“Subir la sangre” con comida</td><td><span class="ev baja">Baja</span></td><td>El cuello de botella es la médula, no el nutriente</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PREGUNTAS ============ -->
+  <section class="panel" id="preguntas">
+    <div class="card">
+      <h2>Preguntas para la Dra. Sosa</h2>
+      <ol class="q">
+        <li>¿A partir de qué conteos puedo <strong>liberar la dieta</strong> y volver a crudos bien lavados?</li>
+        <li>¿Cuánta <strong>proteína al día</strong> es segura para mi riñón con ciclosporina 350 mg? ¿~1.3 g/kg o ~1.0?</li>
+        <li>¿Mido <strong>vitamina D</strong> y la suplemento? ¿Calcio + vitamina D mientras siga con prednisona?</li>
+        <li>¿Seguimos vigilando <strong>magnesio</strong> o conviene suplementar?</li>
+        <li>¿<strong>Omega-3</strong> es seguro con mi conteo de plaquetas, o esperamos?</li>
+        <li>¿<strong>Creatina</strong>: la descartamos por ahora (riñón + ejercicio suspendido)?</li>
+        <li>¿Está bien que <strong>cuide el sodio</strong> y evite sustitutos de sal con potasio?</li>
+        <li>¿Confirmas <strong>limitar res roja/vísceras</strong> y <strong>no suplementar hierro</strong> por la ferritina?</li>
+        <li>¿Puedo usar <strong>agua filtrada</strong> o sigo con embotellada por ahora?</li>
+        <li>Mi hemoglobina venía bajando: ¿umbral para transfundir y señales a vigilar en casa?</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="disc">
+    Documento de apoyo para investigación personal y para conversar con tu equipo médico. No es diagnóstico ni indicación de tratamiento. Las decisiones sobre dieta, medicamentos y suplementos las toma tu médica tratante.
+  </footer>
+</div>
+
+<script>
+// ---------- DATA ----------
+const days = [
+  {n:1,tag:[["cook","🫕 olla de FRIJOL"]],meals:[["Desayuno","Huevos revueltos bien cocidos (2) con calabacita cocida + tortilla tostada + café."],["Colación 1","Yogur pasteurizado con plátano."],["Comida","Caldo de pollo con zanahoria, papa y arroz + pechuga deshebrada (palma) + tortilla."],["Colación 2","Zanahoria cocida al vapor con crema de cacahuate."],["Cena","Frijoles de la olla con queso pasteurizado + tortilla."]]},
+  {n:2,tag:[["use","usa el frijol"]],meals:[["Desayuno","Avena con leche pasteurizada, canela y manzana cocida + café."],["Colación 1","Cacahuates tostados (sin sal) + manzana."],["Comida","Pollo a la plancha (palma) + arroz rojo + calabacitas a la mexicana + frijoles refritos + tortilla."],["Colación 2","Yogur pasteurizado con miel."],["Cena","Quesadilla de queso pasteurizado a la plancha + frijoles."]]},
+  {n:3,tag:[["use","termina el frijol"]],meals:[["Desayuno","Huevo a la mexicana bien cocido (jitomate, cebolla, chile cocidos) + tortillas + café."],["Colación 1","Plátano + almendras."],["Comida","Pescado blanco (tilapia/robalo) bien cocido al vapor con limón + puré de papa + ejotes."],["Colación 2","Pan integral tostado con crema de cacahuate."],["Cena","Frijoles charros sin embutidos crudos (tocino bien cocido opcional) — acaba la olla + tortilla."]]},
+  {n:4,tag:[["cook","🫕 olla de LENTEJA"]],meals:[["Desayuno","Chilaquiles horneados con salsa cocida, pollo deshebrado y queso pasteurizado + café."],["Colación 1","Yogur pasteurizado con avena."],["Comida","Tinga de pollo (salsa de jitomate cocida) sobre arroz + tortilla."],["Colación 2","Pan tostado con crema de cacahuate."],["Cena","Sopa de lentejas con zanahoria y papa + tortilla tostada."]]},
+  {n:5,tag:[["use","usa la lenteja"],["res","🥩 res 1/2"]],meals:[["Desayuno","Avena con leche pasteurizada, plátano y canela + café."],["Colación 1","Pera pelada + nueces."],["Comida","Res magra moderada (bistec, palma chica) con nopales bien cocidos + arroz + tortilla."],["Colación 2","Yogur pasteurizado."],["Cena","Lentejas guisadas (de la olla del día 4) + tortilla."]]},
+  {n:6,tag:[["free","sin legumbre"]],meals:[["Desayuno","Huevos estrellados bien cocidos (yema dura) sobre tortilla + café."],["Colación 1","Manzana cocida con canela."],["Comida","Pechuga al horno (palma) + camote al horno + zanahoria y chícharo cocidos."],["Colación 2","Pan tostado con crema de cacahuate."],["Cena","Crema de calabaza (leche pasteurizada) + huevo cocido picado."]]},
+  {n:7,tag:[["cook","🫕 olla de FRIJOL"]],meals:[["Desayuno","Avena con leche pasteurizada, manzana cocida y nuez + café."],["Colación 1","Plátano + almendras."],["Comida","Albóndigas de pavo/pollo en caldillo de jitomate cocido + arroz + calabacita."],["Colación 2","Yogur pasteurizado."],["Cena","Frijoles de la olla con queso pasteurizado + tortilla."]]},
+  {n:8,tag:[["use","usa el frijol"]],meals:[["Desayuno","Avena con leche pasteurizada, manzana cocida y nuez + café."],["Colación 1","Plátano + almendras."],["Comida","Pollo en salsa verde cocida (tomatillo cocido) + arroz + frijoles + tortilla."],["Colación 2","Yogur pasteurizado."],["Cena","Caldo de pollo con verduras + arroz."]]},
+  {n:9,tag:[["use","termina el frijol"]],meals:[["Desayuno","Huevo revuelto con espinaca bien cocida + tortilla + café."],["Colación 1","Pera pelada + cacahuates tostados."],["Comida","Pescado blanco al horno bien cocido con verduras (calabaza, zanahoria, papa) + arroz."],["Colación 2","Pan integral con crema de cacahuate."],["Cena","Frijoles refritos con queso pasteurizado — acaba la olla + tortilla."]]},
+  {n:10,tag:[["cook","🫕 GARBANZO"]],meals:[["Desayuno","Huevo a la mexicana bien cocido + tortillas + café."],["Colación 1","Yogur pasteurizado con avena."],["Comida","Fajitas de pollo bien cocidas (pimiento y cebolla cocidos) + arroz + tortillas."],["Colación 2","Hummus (del garbanzo de hoy) con pan tostado."],["Cena","Sopa de fideo con pollo deshebrado."]]},
+  {n:11,tag:[["use","usa el garbanzo"]],meals:[["Desayuno","Avena con leche pasteurizada, plátano y canela + café."],["Colación 1","Manzana cocida + nuez."],["Comida","Caldo tlalpeño cocido (pollo, zanahoria, calabaza, garbanzo) — sin aguacate crudo salvo que la Dra. lo autorice."],["Colación 2","Hummus con zanahoria cocida."],["Cena","Quesadillas de queso pasteurizado + calabacitas cocidas."]]},
+  {n:12,tag:[["cook","🫕 olla de LENTEJA"]],meals:[["Desayuno","Chilaquiles cocidos con pollo y queso pasteurizado + café."],["Colación 1","Pera pelada + nueces."],["Comida","Pechuga rellena de queso pasteurizado al horno (palma) + puré de papa + ejotes."],["Colación 2","Pan tostado con crema de cacahuate."],["Cena","Sopa de lentejas + tortilla tostada."]]},
+  {n:13,tag:[["use","termina la lenteja"]],meals:[["Desayuno","Huevo revuelto con calabacita bien cocida + tortilla + café."],["Colación 1","Yogur pasteurizado con miel."],["Comida","Tinga de pollo sobre arroz + tortilla."],["Colación 2","Pan tostado con crema de cacahuate."],["Cena","Lentejas guisadas con zanahoria y papa — acaba la olla + tortilla."]]},
+  {n:14,tag:[["free","sin legumbre"],["res","🥩 res 2/2"]],meals:[["Desayuno","Avena con leche pasteurizada, manzana y canela + café."],["Colación 1","Pera pelada + nueces."],["Comida","Res magra moderada (palma chica, 2º día de res) con nopales cocidos + arroz + tortilla."],["Colación 2","Yogur pasteurizado."],["Cena","Caldo de pollo con arroz y verduras."]]}
+];
+
+const shopping = {
+  "Proteínas":["Pechuga y muslo de pollo (base de casi todos los días)","Pavo molido (albóndigas)","Pescado blanco: tilapia o robalo (2-3 piezas/semana) — siempre bien cocido","Res magra para bistec (poca, solo 2 comidas)","Huevo (siempre bien cocido)"],
+  "Legumbres y granos":["Frijol (bayo/negro) — 2 ollas","Lenteja — 2 ollas","Garbanzo — 1 olla (guisado + hummus)","Arroz, fideo, avena","Tortilla de maíz, pan integral","Crema de cacahuate, tahini (para hummus)"],
+  "Lácteos — solo PASTEURIZADOS":["Leche pasteurizada","Yogur natural pasteurizado","Queso pasteurizado de fundir (panela/oaxaca de marca)"],
+  "Verduras (para cocinar, lavadas con cepillo)":["Calabacita, zanahoria, papa, camote, ejote, chícharo","Jitomate, tomatillo, cebolla, ajo, chile (salsas cocidas)","Espinaca, nopal (cocidos), pimiento"],
+  "Frutas (cáscara gruesa o para cocer)":["Plátano, manzana, pera (peladas/cocidas)"],
+  "Frutos secos / grasas":["Almendras, nueces, cacahuates tostados (sin sal)","Aceite de oliva, poca sal"],
+  "Despensa / bebidas":["Agua embotellada","Café","Canela, hierbas, limón (limón sí, toronja/pomelo NO)"]
+};
+
+// ---------- RENDER ----------
+const badgeClass = {cook:"cook",use:"use",res:"res",free:"free"};
+const daysEl = document.getElementById("days");
+days.forEach((d,i)=>{
+  const badges = d.tag.map(t=>`<span class="badge ${badgeClass[t[0]]}">${t[1]}</span>`).join("");
+  const meals = d.meals.map(m=>`<div class="meal"><div class="label">${m[0]}</div><div class="txt">${m[1]}</div></div>`).join("");
+  const det = document.createElement("details");
+  det.className="day"; if(i<1) det.open=true;
+  det.innerHTML = `<summary><span>Día ${d.n} &nbsp;<span class="badges">${badges}</span></span><span class="chev">▶</span></summary><div class="meals">${meals}</div>`;
+  daysEl.appendChild(det);
+});
+
+const shopEl = document.getElementById("shop");
+let idx=0;
+for(const [grp,items] of Object.entries(shopping)){
+  const g=document.createElement("div"); g.className="shop-group";
+  g.innerHTML=`<h3>${grp}</h3>`;
+  const ul=document.createElement("ul"); ul.className="shop";
+  items.forEach(it=>{ const id="s"+(idx++);
+    ul.innerHTML+=`<li><input type="checkbox" id="${id}"><label for="${id}">${it}</label></li>`; });
+  g.appendChild(ul); shopEl.appendChild(g);
+}
+
+// ---------- TABS ----------
+document.querySelectorAll("#tabs button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    document.getElementById(b.dataset.t).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+});
+function toggleAll(open){document.querySelectorAll(".day").forEach(d=>d.open=open);}
+</script>
+</body>
+</html>
